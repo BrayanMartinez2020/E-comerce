@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Components/Navbar/index.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Components/Navbar/index.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { NavLink } from 'react-router-dom'
+import { useContext } from 'react'
+import { ShoppingCartContext } from '../../Context'
+
+/**
+ * Renders the navigation bar component.
+ *
+ * @return {JSX.Element} The JSX element representing the navigation bar.
+ */
+const Navbar = () => {
+  const context = useContext(ShoppingCartContext)
+  const activeStyle = 'underline underline-offset-4'
+
+  // Sign Out
+  const signOut = localStorage.getItem('sign-out')
+  const parsedSignOut = JSON.parse(signOut)
+  const isUserSignOut = context.signOut || parsedSignOut
+  // Account
+  const account = localStorage.getItem('account')
+  const parsedAccount = JSON.parse(account)
+  // Has an account
+  const noAccountInLocalStorage = parsedAccount ? Object.keys(parsedAccount).length === 0 : true
+  const noAccountInLocalState = context.account ? Object.keys(context.account).length === 0 : true
+  const hasUserAnAccount = !noAccountInLocalStorage || !noAccountInLocalState
+
+  /**
+   * Handles the sign out process.
+   *
+   * @return {undefined} This function does not return any value.
+   */
+  const handleSignOut = () => {
+    const stringifiedSignOut = JSON.stringify(true)
+    localStorage.setItem('sign-out', stringifiedSignOut)
+    context.setSignOut(true)
+  }
+
+  /**
+   * Renders the view based on the user's account status.
+   *
+   * @return {JSX.Element} The rendered view.
+   */
+  const renderView = () => {
+    if (hasUserAnAccount &amp;&amp; !isUserSignOut) {
+      return (
+        &lt;>
+          &lt;li className='text-black/60'>
+            {parsedAccount?.email}
+          &lt;/li>
+          &lt;li>
+            &lt;NavLink
+              to='/my-orders'
+              className={({ isActive }) => isActive ? activeStyle : undefined}>
+              My Orders
+            &lt;/NavLink>
+          &lt;/li>
+          &lt;li>
+            &lt;NavLink
+              to='/my-account'
+              className={({ isActive }) => isActive ? activeStyle : undefined}>
+              My Account
+            &lt;/NavLink>
+          &lt;/li>
+          &lt;li>
+            &lt;NavLink
+              to='/sign-in'
+              className={({ isActive }) => isActive ? activeStyle : undefined}
+              onClick={() => handleSignOut()}>
+              Sign out
+            &lt;/NavLink>
+          &lt;/li>
+        &lt;/>
+      )
+    } else {
+      return (
+        &lt;li>
+          &lt;NavLink
+            to="/sign-in"
+            className={({ isActive }) => isActive ? activeStyle : undefined }
+            onClick={() => handleSignOut()}>
+            Sign in
+          &lt;/NavLink>
+        &lt;/li>
+      )
+    }
+  }
+
+  return (
+    &lt;nav className='flex justify-between items-center fixed z-10 top-0 w-full py-5 px-8 text-sm font-light bg-white' >
+      &lt;ul className='flex items-center gap-3'>
+        &lt;li className='font-semibold text-lg'>
+          &lt;NavLink to={`${isUserSignOut ? '/sign-in' : '/'}`}>
+            Shopi
+          &lt;/NavLink>
+        &lt;/li>
+        &lt;li>
+          &lt;NavLink
+            to='/'
+            onClick={() => context.setSearchByCategory()}
+            className={({ isActive }) =>
+              isActive ? activeStyle : undefined
+            }>
+            All
+          &lt;/NavLink>
+        &lt;/li>
+        &lt;li>
+          &lt;NavLink
+            to='/clothes'
+            onClick={() => context.setSearchByCategory('clothes')}
+            className={({ isActive }) =>
+              isActive ? activeStyle : undefined
+            }>
+            Clothes
+          &lt;/NavLink>
+        &lt;/li>
+        &lt;li>
+          &lt;NavLink
+            to='/electronics'
+            onClick={() => context.setSearchByCategory('electronics')}
+            className={({ isActive }) =>
+              isActive ? activeStyle : undefined
+            }>
+            Electronics
+          &lt;/NavLink>
+        &lt;/li>
+        &lt;li>
+          &lt;NavLink
+            to='/furnitures'
+            onClick={() => context.setSearchByCategory('furnitures')}
+            className={({ isActive }) =>
+              isActive ? activeStyle : undefined
+            }>
+            Furnitures
+          &lt;/NavLink>
+        &lt;/li>
+        &lt;li>
+          &lt;NavLink
+            to='/toys'
+            onClick={() => context.setSearchByCategory('toys')}
+            className={({ isActive }) =>
+              isActive ? activeStyle : undefined
+            }>
+            Toys
+          &lt;/NavLink>
+        &lt;/li>
+        &lt;li>
+          &lt;NavLink
+            to='/others'
+            onClick={() => context.setSearchByCategory('others')}
+            className={({ isActive }) =>
+              isActive ? activeStyle : undefined
+            }>
+            Others
+          &lt;/NavLink>
+        &lt;/li>
+      &lt;/ul>
+      &lt;ul className='flex items-center gap-3'>
+        {renderView()}
+        &lt;li className='flex items-center'>
+           🛒
+        &lt;/li>
+      &lt;/ul>
+    &lt;/nav>
+  )
+}
+
+export { Navbar }</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#App">App</a></li><li><a href="global.html#AppRoutes">AppRoutes</a></li><li><a href="global.html#Card">Card</a></li><li><a href="global.html#CheckoutSideMenu">CheckoutSideMenu</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#Layout">Layout</a></li><li><a href="global.html#MyAccount">MyAccount</a></li><li><a href="global.html#MyOrder">MyOrder</a></li><li><a href="global.html#MyOrders">MyOrders</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#NotFound">NotFound</a></li><li><a href="global.html#OrderCard">OrderCard</a></li><li><a href="global.html#OrdersCard">OrdersCard</a></li><li><a href="global.html#ProductDetail">ProductDetail</a></li><li><a href="global.html#ShoppingCartProvider">ShoppingCartProvider</a></li><li><a href="global.html#SignIn">SignIn</a></li><li><a href="global.html#initializeLocalStorage">initializeLocalStorage</a></li><li><a href="global.html#totalPrice">totalPrice</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Thu Nov 16 2023 13:02:46 GMT-0500 (hora estándar de Colombia)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

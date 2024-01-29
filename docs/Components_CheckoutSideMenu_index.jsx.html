@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Components/CheckoutSideMenu/index.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Components/CheckoutSideMenu/index.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { useContext } from 'react'
+import { Link } from 'react-router-dom'
+import { ShoppingCartContext } from '../../Context'
+import { OrderCard } from '../../Components/OrderCard'
+import { totalPrice } from '../../utils'
+import './styles.css'
+/**
+ * Generates the side menu for the checkout process.
+ *
+ * @return {JSX.Element} The side menu component.
+ */
+const CheckoutSideMenu = () => {
+    const context = useContext(ShoppingCartContext)
+    /**
+     * Deletes a product from the cart based on the provided ID.
+     *
+     * @param {number} id - The ID of the product to be deleted.
+     * @return {undefined} This function does not return a value.
+     */
+    const handleDelete = (id) => {
+        const filteredProducts = context.cartProducts.filter(item => item.id !== id)
+        context.setCartProducts(filteredProducts)
+    }
+    /**
+     * Handles the checkout process.
+     *
+     * @return {undefined} No return value.
+     */
+    const handleCheckout = () => {
+        const date = new Date();
+        const dateString = date.toString().split(' ')[1] + ' ' + date.toString().split(' ')[2] + ' ' + date.toString().split(' ')[3] + ' ' + date.toString().split(' ')[4];
+        
+        const orderToAdd = {
+            date: dateString,
+            products: context.cartProducts,
+            totalProducts: context.cartProducts.length,
+            totalPrice: totalPrice(context.cartProducts),
+        }
+        context.setOrder([...context.order, orderToAdd])
+        context.setCartProducts([])
+        context.setSearchByTitle(null)
+
+    }
+
+    return (
+        &lt;aside className={`${context.isCheckoutSideMenuOpen ? 'flex' : 'hidden'} checkout-side-menu flex-col fixed right-0 border border-black rounded-lg bg-white`}>
+            &lt;div className="flex justify-between items-center p-6">
+                &lt;h2 className="text-lg font-medium">My Order&lt;/h2>
+                &lt;svg
+                    onClick={() => context.closeCheckoutSideMenu()} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 cursor-pointer">
+                    &lt;path strokeLinecap="round" strokeLinejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+                &lt;/svg>
+
+            &lt;/div>
+            &lt;div className="px-6 overflow-y-auto flex-1">
+                {
+                    context.cartProducts?.map(product => (
+                        &lt;OrderCard
+                            key={product.id}
+                            id={product.id}
+                            title={product.title}
+                            price={product.price}
+                            imgUrl={product.images[0]}
+                            handleDelete={handleDelete}
+                        />
+                    ))
+                }
+            &lt;/div>
+            &lt;div className='px-6 mb-6'>
+                &lt;p className='flex justify-between items-center mb-2'>
+                    &lt;span className='font-light'>Total:&lt;/span>
+                    &lt;span className='font-medium text-xl'>${totalPrice(context.cartProducts)}&lt;/span>
+                &lt;/p>
+                &lt;Link to='/my-orders/last'>
+                    &lt;button
+                        className='w-full bg-black text-white font-medium py-2 px-4 rounded-lg'
+                        onClick={() => handleCheckout()}>
+                        Checkout
+                    &lt;/button>
+                &lt;/Link>
+            &lt;/div>
+        &lt;/aside>
+    )
+}
+
+export { CheckoutSideMenu }</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#App">App</a></li><li><a href="global.html#AppRoutes">AppRoutes</a></li><li><a href="global.html#Card">Card</a></li><li><a href="global.html#CheckoutSideMenu">CheckoutSideMenu</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#Layout">Layout</a></li><li><a href="global.html#MyAccount">MyAccount</a></li><li><a href="global.html#MyOrder">MyOrder</a></li><li><a href="global.html#MyOrders">MyOrders</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#NotFound">NotFound</a></li><li><a href="global.html#OrderCard">OrderCard</a></li><li><a href="global.html#OrdersCard">OrdersCard</a></li><li><a href="global.html#ProductDetail">ProductDetail</a></li><li><a href="global.html#ShoppingCartProvider">ShoppingCartProvider</a></li><li><a href="global.html#SignIn">SignIn</a></li><li><a href="global.html#initializeLocalStorage">initializeLocalStorage</a></li><li><a href="global.html#totalPrice">totalPrice</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Thu Nov 16 2023 13:02:46 GMT-0500 (hora estándar de Colombia)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

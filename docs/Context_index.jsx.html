@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Context/index.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Context/index.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { createContext, useState, useEffect  } from 'react'
+
+export const ShoppingCartContext = createContext()
+
+/**
+ * Initializes the local storage by checking for the presence of 'account' and 'signOut' items.
+ * If either item is not present, it sets the item with an empty object or boolean value respectively.
+ * 
+ * @return {void} This function does not return anything.
+ */
+export const initializeLocalStorage = () => {
+  const accountInLocalStorage = localStorage.getItem('account')
+  const signOutInLocalStorage = localStorage.getItem('signOut')
+
+  let parsedAccount
+  let parsedSignOut
+
+  if (!accountInLocalStorage) {
+    localStorage.setItem('account', JSON.stringify({}))
+    parsedAccount = {}
+  }else{
+    parsedAccount = JSON.parse(accountInLocalStorage)
+  }
+
+  if (!signOutInLocalStorage) {
+    localStorage.setItem('signOut', JSON.stringify(false))
+    parsedSignOut = false
+  }else{
+    parsedSignOut = JSON.parse(signOutInLocalStorage)
+  }
+}
+
+/**
+ * Creates a ShoppingCartProvider component.
+ *
+ * @param {Object} children - The child components.
+ * @return {JSX.Element} The ShoppingCartProvider component.
+ */
+export const ShoppingCartProvider = ({children}) => {
+    // Account
+    const [account, setAccount] = useState({})
+
+    // Sign In · Sign Up
+    const [signOut, setSignOut] = useState(false)
+
+    // Shopping Cart · Increment quantity
+    const [count, setCount] = useState(0)
+  
+    // Product Detail · Open/Close
+    const [isProductDetailOpen, setIsProductDetailOpen] = useState(false)
+    const openProductDetail = () => setIsProductDetailOpen(true)
+    const closeProductDetail = () => setIsProductDetailOpen(false)
+  
+    // Checkout Side Menu · Open/Close
+    const [isCheckoutSideMenuOpen, setIsCheckoutSideMenuOpen] = useState(false)
+    const openCheckoutSideMenu = () => setIsCheckoutSideMenuOpen(true)
+    const closeCheckoutSideMenu = () => setIsCheckoutSideMenuOpen(false)
+  
+    // Product Detail · Show product
+    const [productToShow, setProductToShow] = useState({})
+  
+    // Shopping Cart · Add products to cart
+    const [cartProducts, setCartProducts] = useState([])
+  
+    // Shopping Cart · Order
+    const [order, setOrder] = useState([])
+  
+    // Get products
+    const [items, setItems] = useState(null)
+    const [filteredItems, setFilteredItems] = useState(null)
+  
+    // Get products by title
+    const [searchByTitle, setSearchByTitle] = useState(null)
+  
+    // Get products by category
+    const [searchByCategory, setSearchByCategory] = useState(null)
+  
+    useEffect(() => {
+      fetch('https://api.escuelajs.co/api/v1/products')
+        .then(response => response.json())
+        .then(data => setItems(data))
+    }, [])
+  
+    /**
+     * Filters the items by title based on the search keyword.
+     *
+     * @param {Array} items - The array of items to be filtered.
+     * @param {string} searchByTitle - The search keyword for filtering by title.
+     * @return {Array} - The filtered array of items.
+     */
+    const filteredItemsByTitle = (items, searchByTitle) => {
+      return items?.filter(item => item.title.toLowerCase().includes(searchByTitle.toLowerCase()))
+    }
+  
+    /**
+     * Filter items by category.
+     *
+     * @param {array} items - The array of items to filter.
+     * @param {string} searchByCategory - The category to search by.
+     * @return {array} The filtered array of items.
+     */
+    const filteredItemsByCategory = (items, searchByCategory) => {
+      return items?.filter(item => item.category.name.toLowerCase().includes(searchByCategory.toLowerCase()))
+    }
+  
+    /**
+     * Filters the items based on the specified search type.
+     *
+     * @param {string} searchType - The search type to filter the items. Possible values are: 'BY_TITLE', 'BY_CATEGORY', 'BY_TITLE_AND_CATEGORY'.
+     * @param {Array} items - The array of items to be filtered.
+     * @param {string} searchByTitle - The title to search by when searchType is 'BY_TITLE' or 'BY_TITLE_AND_CATEGORY'.
+     * @param {string} searchByCategory - The category to search by when searchType is 'BY_CATEGORY' or 'BY_TITLE_AND_CATEGORY'.
+     * @return {Array} The filtered array of items based on the specified search type.
+     */
+    const filterBy = (searchType, items, searchByTitle, searchByCategory) => {
+      if (searchType === 'BY_TITLE') {
+        return filteredItemsByTitle(items, searchByTitle)
+      }
+  
+      if (searchType === 'BY_CATEGORY') {
+        return filteredItemsByCategory(items, searchByCategory)
+      }
+  
+      if (searchType === 'BY_TITLE_AND_CATEGORY') {
+        return filteredItemsByCategory(items, searchByCategory).filter(item => item.title.toLowerCase().includes(searchByTitle.toLowerCase()))
+      }
+  
+      if (!searchType) {
+        return items
+      }
+    }
+  
+    useEffect(() => {
+      if (searchByTitle &amp;&amp; searchByCategory) setFilteredItems(filterBy('BY_TITLE_AND_CATEGORY', items, searchByTitle, searchByCategory))
+      if (searchByTitle &amp;&amp; !searchByCategory) setFilteredItems(filterBy('BY_TITLE', items, searchByTitle, searchByCategory))
+      if (!searchByTitle &amp;&amp; searchByCategory) setFilteredItems(filterBy('BY_CATEGORY', items, searchByTitle, searchByCategory))
+      if (!searchByTitle &amp;&amp; !searchByCategory) setFilteredItems(filterBy(null, items, searchByTitle, searchByCategory))
+    }, [items, searchByTitle, searchByCategory])
+  
+    return (
+      &lt;ShoppingCartContext.Provider value={{
+        count,
+        setCount,
+        openProductDetail,
+        closeProductDetail,
+        isProductDetailOpen,
+        productToShow,
+        setProductToShow,
+        cartProducts,
+        setCartProducts,
+        isCheckoutSideMenuOpen,
+        openCheckoutSideMenu,
+        closeCheckoutSideMenu,
+        order,
+        setOrder,
+        items,
+        setItems,
+        searchByTitle,
+        setSearchByTitle,
+        filteredItems,
+        searchByCategory,
+        setSearchByCategory,
+        account,
+        setAccount,
+        signOut,
+        setSignOut
+      }}>
+        {children}
+      &lt;/ShoppingCartContext.Provider>
+    )
+  }</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#App">App</a></li><li><a href="global.html#AppRoutes">AppRoutes</a></li><li><a href="global.html#Card">Card</a></li><li><a href="global.html#CheckoutSideMenu">CheckoutSideMenu</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#Layout">Layout</a></li><li><a href="global.html#MyAccount">MyAccount</a></li><li><a href="global.html#MyOrder">MyOrder</a></li><li><a href="global.html#MyOrders">MyOrders</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#NotFound">NotFound</a></li><li><a href="global.html#OrderCard">OrderCard</a></li><li><a href="global.html#OrdersCard">OrdersCard</a></li><li><a href="global.html#ProductDetail">ProductDetail</a></li><li><a href="global.html#ShoppingCartProvider">ShoppingCartProvider</a></li><li><a href="global.html#SignIn">SignIn</a></li><li><a href="global.html#initializeLocalStorage">initializeLocalStorage</a></li><li><a href="global.html#totalPrice">totalPrice</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Thu Nov 16 2023 13:02:46 GMT-0500 (hora estándar de Colombia)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

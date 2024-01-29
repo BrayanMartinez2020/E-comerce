@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: pages/MyAccount/index.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: pages/MyAccount/index.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { useContext, useState, useRef } from 'react'
+import { ShoppingCartContext } from '../../Context'
+import { Layout } from '../../Components/Layout'
+
+/**
+ * Renders the user account information or the user account editing form based on the current view.
+ *
+ * @return {JSX.Element} The rendered user account information or editing form.
+ */
+function MyAccount() {
+  const context = useContext(ShoppingCartContext)
+  const [view, setView] = useState('user-info')
+  const account = localStorage.getItem('account')
+  const parsedAccount = JSON.parse(account)
+  const form = useRef(null)
+
+  /**
+   * Edits the user account information.
+   *
+   * @param {type} paramName - description of parameter
+   * @return {type} description of return value
+   */
+  const editAccount = () => {
+    const formData = new FormData(form.current)
+		const data = {
+			name: formData.get('name'),
+			email: formData.get('email'),
+			password: formData.get('password')
+		}
+
+    // Update account
+    const stringifiedAccount = JSON.stringify(data)
+    localStorage.setItem('account', stringifiedAccount)
+    context.setAccount(data)
+  }
+
+  /**
+   * Renders the user information component.
+   *
+   * @return {JSX.Element} The rendered user information component.
+   */
+  const renderUserInfo = () => {
+    return (
+      &lt;div className='flex flex-col w-80'>
+        &lt;p>
+          &lt;span className='font-light text-sm'>Name: &lt;/span>
+          &lt;span>{parsedAccount?.name}&lt;/span>
+        &lt;/p>
+        &lt;p>
+          &lt;span className='font-light text-sm'>Email: &lt;/span>
+          &lt;span>{parsedAccount?.email}&lt;/span>
+        &lt;/p>
+        &lt;button
+          className='border border-black rounded-lg mt-6 py-3'
+          onClick={() => setView('edit-user-info')}>
+          Edit
+        &lt;/button>
+      &lt;/div>
+    )
+  }
+
+  /**
+   * Renders the form for editing user information.
+   *
+   * @return {JSX.Element} The JSX element representing the form.
+   */
+  const renderEditUserInfo = () => {
+    return (
+      &lt;form ref={form} className='flex flex-col gap-4 w-80'>
+        &lt;div className='flex flex-col gap-1'>
+          &lt;label htmlFor="name" className='font-light text-sm'>Your name:&lt;/label>
+          &lt;input
+            type="text"
+            id="name"
+            name="name"
+            defaultValue={parsedAccount.name}
+            placeholder="Peter"
+            className='rounded-lg border border-black placeholder:font-light placeholder:text-sm placeholder:text-black/60 focus:outline-none py-2 px-4'
+          />
+        &lt;/div>
+        &lt;div className='flex flex-col gap-1'>
+          &lt;label htmlFor="email" className='font-light text-sm'>Your email:&lt;/label>
+          &lt;input
+            type="text"
+            id="email"
+            name="email"
+            defaultValue={parsedAccount.email}
+            placeholder="hi@helloworld.com"
+            className='rounded-lg border border-black placeholder:font-light placeholder:text-sm placeholder:text-black/60 focus:outline-none py-2 px-4'
+          />
+        &lt;/div>
+        &lt;div className='flex flex-col gap-1'>
+          &lt;label htmlFor="password" className='font-light text-sm'>Your password:&lt;/label>
+          &lt;input
+            type="text"
+            id="password"
+            name="password"
+            defaultValue={parsedAccount.password}
+            placeholder="******"
+            className='rounded-lg border border-black placeholder:font-light placeholder:text-sm placeholder:text-black/60 focus:outline-none py-2 px-4'
+          />
+        &lt;/div>
+        &lt;button
+          className='bg-black text-white w-full rounded-lg py-3'
+          onClick={() => {setView('user-info'), editAccount()}}>
+          Edit
+        &lt;/button>
+      &lt;/form>
+    )
+  }
+
+  const renderView = () => view === 'edit-user-info' ? renderEditUserInfo() : renderUserInfo()
+
+  return (
+    &lt;Layout>
+      &lt;h1 className="font-medium text-xl text-center mb-6 w-80">My account&lt;/h1>
+      {renderView()}
+    &lt;/Layout>
+  )
+}
+
+export default MyAccount</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#App">App</a></li><li><a href="global.html#AppRoutes">AppRoutes</a></li><li><a href="global.html#Card">Card</a></li><li><a href="global.html#CheckoutSideMenu">CheckoutSideMenu</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#Layout">Layout</a></li><li><a href="global.html#MyAccount">MyAccount</a></li><li><a href="global.html#MyOrder">MyOrder</a></li><li><a href="global.html#MyOrders">MyOrders</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#NotFound">NotFound</a></li><li><a href="global.html#OrderCard">OrderCard</a></li><li><a href="global.html#OrdersCard">OrdersCard</a></li><li><a href="global.html#ProductDetail">ProductDetail</a></li><li><a href="global.html#ShoppingCartProvider">ShoppingCartProvider</a></li><li><a href="global.html#SignIn">SignIn</a></li><li><a href="global.html#initializeLocalStorage">initializeLocalStorage</a></li><li><a href="global.html#totalPrice">totalPrice</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Thu Nov 16 2023 13:02:46 GMT-0500 (hora estándar de Colombia)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
